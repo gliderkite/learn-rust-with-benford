@@ -1,7 +1,10 @@
-[package]
-name = "learn-rust-with-benford"
-version = "0.1.0"
-authors = ["gliderkite <gliderkite@gmail.com>"]
-edition = "2018"
-
-[dependencies]
+[workspace]
+members = [
+    "chapter01",
+    "chapter02",
+    "chapter03",
+    "chapter04",
+    "chapter05",
+    "chapter06",
+    "chapter07",
+]
