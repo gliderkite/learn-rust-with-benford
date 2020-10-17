@@ -13,17 +13,19 @@ fn main() {
     let file = fs::File::open(dataset).expect("Cannot read dataset");
     let mut reader = csv::Reader::from_reader(file);
 
+    // the digits frequency map
     let mut frequency = HashMap::new();
-    for n in 1..=9 {
-        let digit = std::char::from_digit(n, 10).expect("Invalid digit");
-        frequency.insert(digit, 0);
-    }
 
     log::info!("Parsing CSV records");
     for record in reader.records().filter_map(Result::ok) {
         if let Some(digit) = get_first_digit(&record) {
             log::trace!("Found digit '{}' in {:?}", digit, record);
-            let count = frequency.get_mut(&digit).expect("Digit not found");
+
+            // find the value corresponding to the digit key or insert a new
+            // entry with an initial value of 0
+            let count = frequency.entry(digit).or_insert(0);
+            // count is a mutable reference to the value in the HashMap
+            // increment its value by 1 after dereferencing it
             *count += 1;
         } else {
             log::warn!("No valid digit found in {:?}", record);
@@ -39,6 +41,8 @@ fn main() {
     log::info!("Percentage: {:#.2?}", percentage);
 }
 
+/// Parses the given record and extract the first valid digit from the population
+/// value if any is found. Returns None otherwise.
 fn get_first_digit(record: &csv::StringRecord) -> Option<char> {
     log::trace!("Parsing record: {:?}", record);
     record

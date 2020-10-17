@@ -12,11 +12,6 @@ fn main() {
 
     // the digits frequency map
     let mut frequency = HashMap::new();
-    for n in 1..=9 {
-        // digit to char conversion in base 10
-        let digit = std::char::from_digit(n, 10).expect("Invalid digit");
-        frequency.insert(digit, 0);
-    }
 
     log::info!("Parsing CSV records");
     for record in reader.records() {
@@ -26,8 +21,9 @@ fn main() {
         if let Some(digit) = get_first_digit(&record) {
             log::trace!("Found digit '{}' in {:?}", digit, record);
 
-            // find the value corresponding to the digit key
-            let count = frequency.get_mut(&digit).expect("Digit not found");
+            // find the value corresponding to the digit key or insert a new
+            // entry with an initial value of 0
+            let count = frequency.entry(digit).or_insert(0);
             // count is a mutable reference to the value in the HashMap
             // increment its value by 1 after dereferencing it
             *count += 1;
